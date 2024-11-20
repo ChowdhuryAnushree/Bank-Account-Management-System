@@ -69,6 +69,11 @@ def login():
     global user_account
     username = username_entry.get().strip()
     password = password_entry.get().strip()
+    for char in username:
+        if not (char.isalpha() or char == ' '):
+            messagebox.showerror('Error', 'Name can only contain letters and spaces')
+            return
+
     if username != '' and password != '':
         user_account = Savings_Account(username, password,10000)
         main_screen_gui()
@@ -136,9 +141,14 @@ def withdraw_screen_gui():
     def withdraw_amount():
         try:
             amount = float(withdraw_amt_entry.get())
-            user_account.withdraw_amount(amount)
-            messagebox.showinfo('Success', 'Withdrew: $' + str((amount)))
-            withdraw_screen_gui()
+            if amount <= 0:
+                messagebox.showerror('Error', 'Withdrawal amount must be greater than zero')
+            elif amount > user_account.current_balance():
+                messagebox.showerror('Error', 'Insufficient funds')
+            else:
+                user_account.withdraw_amount(amount)
+                messagebox.showinfo('Success', 'Withdrew: $' + str(amount))
+                withdraw_screen_gui()
         except ValueError:
             messagebox.showerror('Error', 'Please enter a valid numeric amount')
 
